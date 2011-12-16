@@ -53,3 +53,5 @@ To add support for older browsers you could do something like:
       // and let the browser construct the POST
       xhr.send(data);
     }
+
+Some of the code comes from http://igstan.ro/posts/2009-01-11-ajax-file-upload-with-pure-javascript.html
