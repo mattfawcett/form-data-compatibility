@@ -3,7 +3,6 @@ class window.FormDataCompatibility
   constructor: ->
     this.fields = {}
     this.boundary = this.generateBoundary()
-    this.boundary = "----WebKitFormBoundaryhFJrYkmUxJxFHf1M"
     this.contentType = "multipart/form-data; boundary=#{this.boundary}"
     this.CRLF = "\r\n"
 
