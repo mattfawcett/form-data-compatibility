@@ -1,10 +1,23 @@
 window.FormDataCompatibility = (function() {
 
-  function FormDataCompatibility() {
+  function FormDataCompatibility(form) {
     this.fields = {};
     this.boundary = this.generateBoundary();
     this.contentType = "multipart/form-data; boundary=" + this.boundary;
     this.CRLF = "\r\n";
+
+    if (typeof form !== 'undefined') {
+      for (var i = 0; i < form.elements.length; i++) {
+        var e = form.elements[i];
+	// If not set, the element's name is auto-generated
+        var name = (e.name !== null && e.name !== '') ? e.name : this.getElementNameByIndex(i);
+        this.append(name, e);
+      }
+    }
+  }
+
+  FormDataCompatibility.prototype.getElementNameByIndex = function(index) {
+    return '___form_element__' + index;	// Strange enough to avoid collision with user-defined names
   }
 
   FormDataCompatibility.prototype.append = function(key, value) {
@@ -15,9 +28,8 @@ window.FormDataCompatibility = (function() {
     return xhr.setRequestHeader("Content-Type", this.contentType);
   };
 
-  FormDataCompatibility.prototype.contentType = function() {
-    var contentType;
-    return contentType = "multipart/form-data; boundary=" + this.boundary;
+  FormDataCompatibility.prototype.getContentType = function() {
+    return this.contentType;
   };
 
   FormDataCompatibility.prototype.generateBoundary = function() {
@@ -41,8 +53,13 @@ window.FormDataCompatibility = (function() {
   FormDataCompatibility.prototype.buildPart = function(key, value) {
     var part;
     if (typeof value === "string") {
-      part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF + this.CRLF;
-      part += value + this.CRLF;
+      part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+      part += "Content-Type: text/plain; charset=utf-8" + this.CRLF + this.CRLF;
+      part += unescape(encodeURIComponent(value)) + this.CRLF;	// UTF-8 encoded like in real FormData
+    } else if (typeof value.fileName === 'undefined') {
+      part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+      part += "Content-Type: text/plain; charset=utf-8" + this.CRLF + this.CRLF;
+      part += unescape(encodeURIComponent(value.value)) + this.CRLF;	// UTF-8 encoded like in real FormData
     } else {
       part = "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + value.fileName + "\"" + this.CRLF;
       part += "Content-Type: " + value.type + this.CRLF + this.CRLF;
