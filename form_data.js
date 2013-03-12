@@ -56,14 +56,18 @@ window.FormDataCompatibility = (function() {
       part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
       part += "Content-Type: text/plain; charset=utf-8" + this.CRLF + this.CRLF;
       part += unescape(encodeURIComponent(value)) + this.CRLF;	// UTF-8 encoded like in real FormData
-    } else if (typeof value.fileName === 'undefined') {
-      part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
-      part += "Content-Type: text/plain; charset=utf-8" + this.CRLF + this.CRLF;
-      part += unescape(encodeURIComponent(value.value)) + this.CRLF;	// UTF-8 encoded like in real FormData
-    } else {
-      part = "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + value.fileName + "\"" + this.CRLF;
-      part += "Content-Type: " + value.type + this.CRLF + this.CRLF;
-      part += value.getAsBinary() + this.CRLF;
+    } else if (typeof value === typeof File) {
+        part = "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + value.fileName + "\"" + this.CRLF;
+        part += "Content-Type: " + value.type + this.CRLF + this.CRLF;
+        part += value.getAsBinary() + this.CRLF;
+    } else if (typeof value === typeof HTMLInputElement) {
+      if (value.type == 'file') {
+        // Unsupported
+      } else {
+        part = "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+        part += "Content-Type: text/plain; charset=utf-8" + this.CRLF + this.CRLF;
+        part += unescape(encodeURIComponent(value.value)) + this.CRLF;	// UTF-8 encoded like in real FormData
+      }
     }
     return part;
   };
