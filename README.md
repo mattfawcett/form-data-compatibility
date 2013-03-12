@@ -65,3 +65,5 @@ Contributors
 ------------
 [Matthew Fawcett](https://github.com/mattfawcett): Original code  
 [Ignacio M. Bataller](https://github.com/uavster): Passing a form as a parameter to the constructor
+
+Some of the code comes from http://igstan.ro/posts/2009-01-11-ajax-file-upload-with-pure-javascript.html
