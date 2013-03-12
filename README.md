@@ -56,7 +56,7 @@ To add support for older browsers you could do something like:
 
 Like the standard FormData, a FormDataCompatibility object may be created by passing a form as a parameter:
 
-    var form = document.getElementById(formId);
+    form = document.getElementById(formId);
     data = new FormDataCompatibility(form);
 
 This is equivalent to calling append() for every input field in the form. However, please be aware that input fields of type "file" are not supported in this version.
